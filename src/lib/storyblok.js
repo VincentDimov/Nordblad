@@ -177,8 +177,10 @@ export function getRouteSlug(story, folder) {
 
 export function getResolvedAuthor(article) {
   const author = article?.content?.author;
-  return author && typeof author === "object" && !Array.isArray(author)
-    ? author
+  const resolvedAuthor = Array.isArray(author) ? author[0] : author;
+
+  return resolvedAuthor && typeof resolvedAuthor === "object"
+    ? resolvedAuthor
     : null;
 }
 

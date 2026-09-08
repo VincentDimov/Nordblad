@@ -17,6 +17,9 @@ Nordbladet är en studentbyggd nättidning för kursuppgiften i headless CMS. De
 
    ```bash
    npm install
+   
+
+
    ```
 
 2. Kopiera `.env.example` till `.env.local` och fyll i värdena:
