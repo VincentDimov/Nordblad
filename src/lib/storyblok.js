@@ -211,25 +211,6 @@ export function getCategoryRouteSlugs(slug) {
   return [...new Set([slug, categorySlugAliases[slug]].filter(Boolean))];
 }
 
-// Existing job-portal routes are deliberately left available and use these
-// helpers. They can be removed later together with their Storyblok content.
-export async function getJobs({ department, searchTerm } = {}) {
-  const params = {
-    starts_with: "jobs/",
-    content_type: "job-post",
-    sort_by: "content.publishedAt:desc",
-  };
-
-  if (department) params.filter_query = { department: { in: department } };
-  if (searchTerm) params.search_term = searchTerm;
-
-  return getStories(params);
-}
-
-export async function getJob(slug) {
-  return getStory(`jobs/${slug}`);
-}
-
 export async function getDatasourceMap(slug) {
   if (!prepareRequest()) return new Map();
 
