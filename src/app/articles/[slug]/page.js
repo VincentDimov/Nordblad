@@ -1,12 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { StoryblokServerRichText } from "@storyblok/react/rsc";
-import AuthorAvatar from "@/components/AuthorAvatar";
+import { StoryblokLiveEditing, StoryblokServerComponent } from "@storyblok/react/rsc";
 import {
   getArticle,
   getArticles,
-  getAuthorName,
-  getCategoryLabel,
   getResolvedAuthor,
   getRouteSlug,
 } from "@/lib/storyblok";
@@ -37,39 +33,16 @@ export default async function ArticlePage({ params }) {
 
   if (!article) notFound();
 
-  const { title, summary, content, category } = article.content || {};
-  const author = getResolvedAuthor(article);
-  const authorSlug = getRouteSlug(author, "authors");
-  const categoryLabel = getCategoryLabel(category);
-
   return (
-    <main className="flex-1 px-6 py-12 md:py-20">
-      <article className="mx-auto max-w-3xl">
-        <Link className="mb-8 inline-flex text-sm text-muted transition-colors hover:text-white" href="/articles">
-          <span aria-hidden="true" className="mr-2">←</span> Till alla artiklar
-        </Link>
-        <header className="glass-card mb-8 p-7 md:p-10">
-          {categoryLabel && <Link className="glass-pill mb-5 hover:border-white/30 hover:text-white" href={`/categories/${encodeURIComponent(category)}`}>{categoryLabel}</Link>}
-          <h1 className="mb-5 text-3xl font-semibold leading-tight text-gradient md:text-5xl">{title || "Namnlös artikel"}</h1>
-          {summary && <p className="text-lg leading-relaxed text-muted">{summary}</p>}
-        </header>
-
-        {content && (
-          <div className="glass-card mb-8 p-7 md:p-10">
-            <div className="prose-glass"><StoryblokServerRichText document={content} /></div>
-          </div>
-        )}
-
-        <aside className="glass-card flex items-center gap-4 p-5">
-          <div className="w-16 shrink-0"><AuthorAvatar author={author} /></div>
-          <div>
-            <p className="text-xs uppercase tracking-wider text-dim">Skriven av</p>
-            {authorSlug ? (
-              <Link className="text-lg font-semibold text-white hover:text-indigo-200" href={`/authors/${authorSlug}`}>{getAuthorName(article)}</Link>
-            ) : <p className="text-lg font-semibold text-white">{getAuthorName(article)}</p>}
-          </div>
-        </aside>
-      </article>
-    </main>
+    <>
+      <StoryblokLiveEditing story={article} />
+      <StoryblokServerComponent
+        blok={{
+          ...article.content,
+          author: getResolvedAuthor(article),
+          articleSlug: slug,
+        }}
+      />
+    </>
   );
 }

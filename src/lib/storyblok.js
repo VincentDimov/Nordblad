@@ -1,5 +1,7 @@
 import { apiPlugin, getStoryblokApi, storyblokInit } from "@storyblok/react/rsc";
 import { unstable_noStore as noStore } from "next/cache";
+import Article from "@/components/blocks/Article";
+import Author from "@/components/blocks/Author";
 import CtaSection from "@/components/blocks/CtaSection";
 import Category from "@/components/blocks/Category";
 import FeatureGrid from "@/components/blocks/FeatureGrid";
@@ -31,6 +33,8 @@ const components = {
   category: Category,
   "filtered-posts": FilteredPosts,
   filtered_posts: FilteredPosts,
+  article: Article,
+  author: Author,
 };
 
 // Do not initialize the API client without a token. This keeps local builds
