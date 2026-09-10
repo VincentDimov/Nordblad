@@ -13,15 +13,6 @@ import TextSection from "@/components/blocks/TextSection";
 const CONTENT_VERSION = process.env.STORYBLOK_VERSION || "published";
 const hasStoryblokToken = Boolean(process.env.STORYBLOK_DELIVERY_API_TOKEN);
 
-// The first category story was created with the URL slug `guider`, while
-// articles and an earlier version of the navigation used `guide`. Keep the
-// legacy URL and category value working while the existing Storyblok content
-// is migrated to one shared value.
-const categorySlugAliases = {
-  guide: "guider",
-  guider: "guide",
-};
-
 // The old page blocks are kept registered so existing Storyblok page stories
 // continue to render while the newspaper content types are added.
 const components = {
@@ -134,15 +125,11 @@ export async function getArticlesByAuthor(authorUuid) {
 export async function getArticlesByCategory(categorySlug) {
   if (!categorySlug) return [];
 
-  const categoryValues = [categorySlug, categorySlugAliases[categorySlug]]
-    .filter(Boolean)
-    .join(",");
-
   return getStories({
     ...articleParams,
     filter_query: {
       category: {
-        in: categoryValues,
+        in: categorySlug,
       },
     },
   });
@@ -157,11 +144,7 @@ export async function getCategories() {
 }
 
 export async function getCategory(slug) {
-  const category = await getStory(`categories/${slug}`);
-
-  if (category || !categorySlugAliases[slug]) return category;
-
-  return getStory(`categories/${categorySlugAliases[slug]}`);
+  return getStory(`categories/${slug}`);
 }
 
 // These helpers prevent paths such as /authors/authors/anna when Storyblok
@@ -205,14 +188,7 @@ export function getCategoryRouteSlug(category) {
   const value = Array.isArray(category) ? category[0] : category;
   if (!value || typeof value !== "string") return null;
 
-  const slug = value.replace(/^\/+|\/+$/g, "");
-  return categorySlugAliases[slug] || slug;
-}
-
-export function getCategoryRouteSlugs(slug) {
-  if (!slug || typeof slug !== "string") return [];
-
-  return [...new Set([slug, categorySlugAliases[slug]].filter(Boolean))];
+  return value.replace(/^\/+|\/+$/g, "");
 }
 
 export async function getDatasourceMap(slug) {

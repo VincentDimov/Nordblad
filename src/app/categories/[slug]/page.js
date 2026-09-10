@@ -3,16 +3,15 @@ import { StoryblokLiveEditing, StoryblokServerComponent } from "@storyblok/react
 import {
   getCategories,
   getCategory,
-  getCategoryRouteSlugs,
   getRouteSlug,
 } from "@/lib/storyblok";
 
 export async function generateStaticParams() {
   const categories = await getCategories();
-  const slugs = categories
-    .flatMap((category) => getCategoryRouteSlugs(getRouteSlug(category, "categories")));
-
-  return [...new Set(slugs)].map((slug) => ({ slug }));
+  return categories
+    .map((category) => getRouteSlug(category, "categories"))
+    .filter(Boolean)
+    .map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }) {
